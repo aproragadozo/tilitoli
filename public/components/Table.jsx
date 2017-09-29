@@ -41,81 +41,28 @@ class Table extends React.Component {
 
         });
         */
-        // this.state.fekete.id should also be updated!
-        // same row
-        if(cellInfo.sor === this.state.fekete.fuggoleges) {
-            if(cellInfo.oszlop+1 === this.state.fekete.vizszintes) {
-                this.setState(function(prevState) {
-                    let stringId = cellInfo.id.toString();
-                // copying prevState into newState
-                    let newState = JSON.parse(JSON.stringify(prevState));
-                    newState.helyzet[[{ stringId }][0]] = this.state.fekete.fuggoleges;
-                    newState.helyzet[[{stringId}][1]] = this.state.fekete.vizszintes;
-                    newState.fekete.id = stringId;
-                    newState.fekete.vizszintes = cellInfo.oszlop;
-                    newState.fekete.fuggoleges = cellInfo.sor;
-                    return newState;
-                });
-            }
-            else if(cellInfo.sor-1 === this.state.fekete.vizszintes) {
-                this.setState(function(prevState) {
-                    let stringId = cellInfo.id.toString();
-                // copying prevState into newState
-                    let newState = JSON.parse(JSON.stringify(prevState));
-                    newState.helyzet[[{ stringId }][0]] = this.state.fekete.fuggoleges;
-                    newState.helyzet[[{stringId}][1]] = this.state.fekete.vizszintes;
-                    newState.fekete.id = stringId;
-                    newState.fekete.vizszintes = cellInfo.oszlop;
-                    newState.fekete.fuggoleges = cellInfo.sor;
-                    return newState;
-                });
-            }
+        // something is jumbled up here;
+        // retracing steps asap
+        if(
+            ((cellInfo.sor === this.state.fekete.fuggoleges) 
+            && (cellInfo.oszlop === this.state.fekete.vizszintes -1 || cellInfo.oszlop === this.state.fekete.vizszintes + 1))
+            || 
+            ((cellInfo.oszlop === this.state.fekete.vizszintes)
+            && (cellInfo.sor === this.state.fekete.fuggoleges -1 || cellInfo.oszlop === this.state.fekete.fuggoleges + 1))
+        ) 
+        {  
+            this.setState(function(prevState) {
+                let stringId = cellInfo.id.toString();
+                let newState = JSON.parse(JSON.stringify(prevState));
+                // cell to fekete previous position
+                newState.helyzet[[{ stringId }][0]] = this.state.fekete.fuggoleges;
+                newState.helyzet[[{stringId}][1]] = this.state.fekete.vizszintes;
+                newState.fekete.id = stringId;
+                newState.fekete.vizszintes = cellInfo.oszlop;
+                newState.fekete.fuggoleges = cellInfo.sor;
+                return newState;
+            });
         }
-        // same column
-        if(cellInfo.oszlop === this.state.fekete.vizszintes) {
-            if(cellInfo.sor+1 === this.state.fekete.fuggoleges) {
-                this.setState(function(prevState) {
-                    let stringId = cellInfo.id.toString();
-                // copying prevState into newState
-                    let newState = JSON.parse(JSON.stringify(prevState));
-                    newState.helyzet[[{ stringId }][0]] = this.state.fekete.fuggoleges;
-                    newState.helyzet[[{stringId}][1]] = this.state.fekete.vizszintes;
-                    newState.fekete.id = stringId;
-                    newState.fekete.vizszintes = cellInfo.oszlop;
-                    newState.fekete.fuggoleges = cellInfo.sor;
-                    return newState;
-                });
-            }
-            else if(cellInfo.sor-1 === this.state.fekete.fuggoleges) {
-                this.setState(function(prevState) {
-                    let stringId = cellInfo.id.toString();
-                // copying prevState into newState
-                    let newState = JSON.parse(JSON.stringify(prevState));
-                    newState.helyzet[[{ stringId }][0]] = this.state.fekete.fuggoleges;
-                    newState.helyzet[[{stringId}][1]] = this.state.fekete.vizszintes;
-                    newState.fekete.id = stringId;
-                    newState.fekete.vizszintes = cellInfo.oszlop;
-                    newState.fekete.fuggoleges = cellInfo.sor;
-                    return newState;
-                });
-            }
-        }
-        /*
-    if (((cellInfo.sor === this.state.fekete.fuggoleges) && ((cellInfo.oszlop - 1 === this.state.fekete.vizszintes) || (cellInfo.oszlop +
-            1 === this.state.fekete.vizszintes))) || ((cellInfo.oszlop === this.state.fekete.viszszintes) && ((cellInfo.sor - 1 === this.state.fekete.fuggoleges) || (cellInfo.sor + 1 === this.state.fekete.fuggoleges)))) {
-        this.setState(function(prevState) {
-            var stringId = cellInfo.id.toString();
-            // copying prevState into newState
-            var newState = JSON.parse(JSON.stringify(prevState));
-            newState.helyzet[[{ stringId }][0]] = this.state.fekete.fuggoleges;
-            newState.helyzet[[{stringId}][1]] = this.state.fekete.vizszintes;
-            newState.fekete.id = stringId;
-            newState.fekete.vizszintes = cellInfo.oszlop;
-            newState.fekete.fuggoleges = cellInfo.sor;
-            return newState;
-        });
-    }
-    */
     };
     positionCell(width, height, size, index, row, col) {
         let pos;
