@@ -19777,8 +19777,8 @@
 
 	        _this.state = {
 	            fekete: { id: '16', vizszintes: -3, fuggoleges: -3, src: "https://upload.wikimedia.org/wikipedia/commons/6/68/Solid_black.png", width: 400, height: 400 },
-	            rows: [0, -1, -2, -3],
-	            columns: [0, -1, -2, -3],
+	            rows: [0, 1, 2, 3],
+	            columns: [0, 1, 2, 3],
 	            helyzet: {
 	                '1': [0, 0],
 	                '2': [0, -1],
@@ -19796,11 +19796,18 @@
 	                '14': [-3, -1],
 	                '15': [-3, -2],
 	                '16': [-3, -3]
-	            }
+	            },
+	            // alternative grid
+	            grid: [[0, 1, 2, 3], [0, 1, 2, 3], [0, 1, 2, 3], [0, 1, 2, 3]],
+	            // alternative blank block
+	            blank: [3, 3]
 	        };
 	        _this.isBlack = _this.isBlack.bind(_this);
 	        _this.positionCell = _this.positionCell.bind(_this);
 	        _this.callBack = _this.callBack.bind(_this);
+
+	        _this.swapBlocks = _this.swapBlocks.bind(_this);
+
 	        _this.blackify = _this.blackify.bind(_this);
 	        _this.positionCellHorizontally = _this.positionCellHorizontally.bind(_this);
 	        _this.positionCellVertically = _this.positionCellVertically.bind(_this);
@@ -19816,26 +19823,44 @@
 	              });
 	            */
 	            // something is jumbled up here;
-	            // retracing steps asap
-	            if (cellInfo.sor === this.state.fekete.fuggoleges && (cellInfo.oszlop === this.state.fekete.vizszintes - 1 || cellInfo.oszlop === this.state.fekete.vizszintes + 1) || cellInfo.oszlop === this.state.fekete.vizszintes && (cellInfo.sor === this.state.fekete.fuggoleges - 1 || cellInfo.oszlop === this.state.fekete.fuggoleges + 1)) {
-	                this.setState(function (prevState) {
-	                    var stringId = cellInfo.id.toString();
-	                    var newState = JSON.parse(JSON.stringify(prevState));
+	            if (cellInfo.sor === this.state.blank[0] && (cellInfo.oszlop === this.state.blank[1] - 1 || cellInfo.oszlop === this.state.blank[1] + 1) || cellInfo.oszlop === this.state.blank[1] && (cellInfo.sor === this.state.blank[0] - 1 || cellInfo.oszlop === this.state.blank[0] + 1)) {
+	                this.swapBlocks(cellInfo);
+	                /*
+	                this.setState(function(prevState) {
+	                    let stringId = cellInfo.id.toString();
+	                    let newState = JSON.parse(JSON.stringify(prevState));
 	                    // cell to fekete previous position
-	                    newState.helyzet[[{ stringId: stringId }][0]] = this.state.fekete.fuggoleges;
-	                    newState.helyzet[[{ stringId: stringId }][1]] = this.state.fekete.vizszintes;
+	                    newState.helyzet[[{ stringId }][0]] = prevState.fekete.fuggoleges;
+	                    newState.helyzet[[{stringId}][1]] = prevState.fekete.vizszintes;
 	                    newState.fekete.id = stringId;
 	                    newState.fekete.vizszintes = cellInfo.oszlop;
 	                    newState.fekete.fuggoleges = cellInfo.sor;
 	                    return newState;
 	                });
+	                */
 	            }
 	        }
 	    }, {
+	        key: 'swapBlocks',
+	        value: function swapBlocks(cell) {
+	            this.setState(function (prevState) {
+	                var newState = JSON.parse(JSON.stringify(prevState));
+	                console.log(cell.sor + ", " + newState.rows[cell.sor]);
+	                newState.rows[cell.sor] = prevState.blank[0];
+	                newState.columns[cell.oszlop] = prevState.blank[1];
+	                newState.blank[0] = cell.sor;
+	                newState.blank[1] = cell.oszlop;
+	                console.log(JSON.stringify(newState, null, 4));
+	                return newState;
+	            });
+	        }
+	    }, {
 	        key: 'positionCell',
-	        value: function positionCell(width, height, size, index, row, col) {
+	        value: function positionCell(width, height, size, row, col) {
 	            var pos = void 0;
-	            if (this.isBlack(index)) {
+	            row *= -1;
+	            col *= -1;
+	            if (this.isBlack(row, col)) {
 	                pos = 0;
 	            } else {
 	                var xPos = width / size * row + 'px';
@@ -19846,13 +19871,14 @@
 	        }
 	    }, {
 	        key: 'blackify',
-	        value: function blackify(index, img) {
-	            return this.isBlack(index) ? this.state.fekete : img;
+	        value: function blackify(row, col, img) {
+	            return this.isBlack(row, col) ? this.state.fekete : img;
 	        }
 	    }, {
 	        key: 'positionCellHorizontally',
 	        value: function positionCellHorizontally(index) {
-	            index = index.toString();return index === this.state.fekete.id ? this.state.fekete.vizszintes : this.state.helyzet[index][0];
+	            index = index.toString();
+	            return index === this.state.fekete.id ? this.state.fekete.vizszintes : this.state.helyzet[index][0];
 	        }
 	    }, {
 	        key: 'positionCellVertically',
@@ -19862,14 +19888,12 @@
 	        }
 	    }, {
 	        key: 'isBlack',
-	        value: function isBlack(a) {
-	            return a.toString() === this.state.fekete.id;
+	        value: function isBlack(a, b) {
+	            return a === this.state.blank[0] && b === this.state.blank[1];
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
-
 	            var i, j;
 	            var startingCoords = {};
 	            var counter = 1;
@@ -19878,25 +19902,27 @@
 	            var cellDimensions = 4;
 	            //var stil = { position: 'relative', width: '410px', height: 'auto' };
 	            img.src = "https://i.pinimg.com/736x/8c/bd/c8/8cbdc87ea653132a0fe6207007d915c1--pasta-cat-love.jpg";
+	            var negyzethalo = [];
+	            for (var r = 0; r < this.state.grid.length; r++) {
+	                for (var c = 0; c < this.state.grid[r].length; c++) {
+	                    negyzethalo.push(React.createElement(Cell, {
+	                        img: this.blackify(r, c, img),
+	                        size: cellDimensions,
+	                        backgroundPos: this.positionCell(img.width, img.height, cellDimensions, r, c),
+	                        horizontal: r,
+	                        vertical: c,
+	                        black: this.isBlack(r, c),
+	                        clickHandler: this.callBack
+	                    }));
+	                }
+	            }
 	            return React.createElement(
 	                'div',
 	                { className: 'wrapper' },
 	                React.createElement(
 	                    'div',
 	                    null,
-	                    this.state.rows.map(function (row) {
-	                        return _this2.state.columns.map(function (column) {
-	                            return React.createElement(Cell, { id: counter++,
-	                                img: _this2.blackify(index, img),
-	                                size: cellDimensions,
-	                                backgroundPos: _this2.positionCell(img.width, img.height, cellDimensions, index, column, row),
-	                                horizontal: _this2.positionCellHorizontally(index),
-	                                vertical: _this2.positionCellVertically(index),
-	                                black: _this2.isBlack(index++),
-	                                clickHandler: _this2.callBack
-	                            });
-	                        });
-	                    })
+	                    negyzethalo
 	                )
 	            );
 	        }
@@ -19933,8 +19959,8 @@
 
 	        var _this = _possibleConstructorReturn(this, (Cell.__proto__ || Object.getPrototypeOf(Cell)).call(this, props));
 
-	        _this.state = { sor: _this.props.vertical,
-	            oszlop: _this.props.horizontal,
+	        _this.state = { sor: _this.props.horizontal,
+	            oszlop: _this.props.vertical,
 	            black: _this.props.black };
 	        _this.swapper = _this.swapper.bind(_this);
 	        return _this;
@@ -19942,13 +19968,12 @@
 
 	    _createClass(Cell, [{
 	        key: 'swapper',
-	        value: function swapper(a, b, c) {
+	        value: function swapper(r, c) {
 	            var cellInfo = {};
-	            cellInfo.id = a;
-	            cellInfo.sor = b;
+	            cellInfo.sor = r;
 	            cellInfo.oszlop = c;
 	            this.props.clickHandler(cellInfo);
-	            this.setState({ sor: b, oszlop: c });
+	            //this.setState({ sor: r, oszlop: c });
 	        }
 	    }, {
 	        key: 'render',
@@ -19967,10 +19992,10 @@
 	                left: this.props.img.width / this.props.size * Math.abs(this.state.sor),
 	                top: this.props.img.height / this.props.size * Math.abs(this.state.oszlop)
 	            };
-	            return React.createElement('div', { id: this.props.id,
+	            return React.createElement('div', {
 	                style: style,
 	                onClick: function onClick() {
-	                    return _this2.swapper(_this2.props.id, _this2.state.oszlop, _this2.state.sor);
+	                    return _this2.swapper(_this2.state.sor, _this2.state.oszlop);
 	                }
 	            });
 	        }
