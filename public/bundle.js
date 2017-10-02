@@ -19776,27 +19776,7 @@
 	        var _this = _possibleConstructorReturn(this, (Table.__proto__ || Object.getPrototypeOf(Table)).call(this, props));
 
 	        _this.state = {
-	            fekete: { id: '16', vizszintes: -3, fuggoleges: -3, src: "https://upload.wikimedia.org/wikipedia/commons/6/68/Solid_black.png", width: 400, height: 400 },
-	            rows: [0, 1, 2, 3],
-	            columns: [0, 1, 2, 3],
-	            helyzet: {
-	                '1': [0, 0],
-	                '2': [0, -1],
-	                '3': [0, -2],
-	                '4': [0, -3],
-	                '5': [-1, 0],
-	                '6': [-1, -1],
-	                '7': [-1, -2],
-	                '8': [-1, -3],
-	                '9': [-2, 0],
-	                '10': [-2, -1],
-	                '11': [-2, -2],
-	                '12': [-2, -3],
-	                '13': [-3, 0],
-	                '14': [-3, -1],
-	                '15': [-3, -2],
-	                '16': [-3, -3]
-	            },
+	            fekete: { id: '16', vizszintes: -3, fuggoleges: -3, src: "https://i.pinimg.com/736x/25/10/1f/25101f6abb216898babcb5498197f5cb.jpg", width: 400, height: 400 },
 	            // alternative grid
 	            grid: [[0, 1, 2, 3], [0, 1, 2, 3], [0, 1, 2, 3], [0, 1, 2, 3]],
 	            // alternative blank block
@@ -19820,24 +19800,10 @@
 	            /*  this will be interesting once the grid is refactored so that only 15 blocks are rendered at a time,
 	                based on their ids
 	            Object.keys(this.state.helyzet).forEach(function(key) {
-	              });
+	            });
 	            */
-	            // something is jumbled up here;
 	            if (cellInfo.sor === this.state.blank[0] && (cellInfo.oszlop === this.state.blank[1] - 1 || cellInfo.oszlop === this.state.blank[1] + 1) || cellInfo.oszlop === this.state.blank[1] && (cellInfo.sor === this.state.blank[0] - 1 || cellInfo.oszlop === this.state.blank[0] + 1)) {
 	                this.swapBlocks(cellInfo);
-	                /*
-	                this.setState(function(prevState) {
-	                    let stringId = cellInfo.id.toString();
-	                    let newState = JSON.parse(JSON.stringify(prevState));
-	                    // cell to fekete previous position
-	                    newState.helyzet[[{ stringId }][0]] = prevState.fekete.fuggoleges;
-	                    newState.helyzet[[{stringId}][1]] = prevState.fekete.vizszintes;
-	                    newState.fekete.id = stringId;
-	                    newState.fekete.vizszintes = cellInfo.oszlop;
-	                    newState.fekete.fuggoleges = cellInfo.sor;
-	                    return newState;
-	                });
-	                */
 	            }
 	        }
 	    }, {
@@ -19845,9 +19811,9 @@
 	        value: function swapBlocks(cell) {
 	            this.setState(function (prevState) {
 	                var newState = JSON.parse(JSON.stringify(prevState));
-	                console.log(cell.sor + ", " + newState.rows[cell.sor]);
-	                newState.rows[cell.sor] = prevState.blank[0];
-	                newState.columns[cell.oszlop] = prevState.blank[1];
+	                console.log(newState.grid[cell.sor][cell.oszlop] + ", " + newState.grid[cell.oszlop][cell.sor]);
+	                newState.grid[cell.sor][cell.oszlop] = prevState.blank[0];
+	                newState.grid[cell.oszlop][cell.sor] = prevState.blank[1];
 	                newState.blank[0] = cell.sor;
 	                newState.blank[1] = cell.oszlop;
 	                console.log(JSON.stringify(newState, null, 4));
@@ -19905,7 +19871,10 @@
 	            var negyzethalo = [];
 	            for (var r = 0; r < this.state.grid.length; r++) {
 	                for (var c = 0; c < this.state.grid[r].length; c++) {
+	                    var index = r * 4 + (c + 1);
 	                    negyzethalo.push(React.createElement(Cell, {
+	                        key: index,
+	                        id: index,
 	                        img: this.blackify(r, c, img),
 	                        size: cellDimensions,
 	                        backgroundPos: this.positionCell(img.width, img.height, cellDimensions, r, c),
@@ -19968,8 +19937,9 @@
 
 	    _createClass(Cell, [{
 	        key: 'swapper',
-	        value: function swapper(r, c) {
+	        value: function swapper(id, r, c) {
 	            var cellInfo = {};
+	            cellInfo.id = id;
 	            cellInfo.sor = r;
 	            cellInfo.oszlop = c;
 	            this.props.clickHandler(cellInfo);
@@ -19989,13 +19959,13 @@
 	                height: this.props.img.height / this.props.size,
 	                backgroundPosition: this.props.backgroundPos,
 	                backgroundImage: "url(" + this.props.img.src + ")",
-	                left: this.props.img.width / this.props.size * Math.abs(this.state.sor),
-	                top: this.props.img.height / this.props.size * Math.abs(this.state.oszlop)
+	                left: this.props.img.width / this.props.size * Math.abs(this.props.horizontal),
+	                top: this.props.img.height / this.props.size * Math.abs(this.props.vertical)
 	            };
-	            return React.createElement('div', {
+	            return React.createElement('div', { id: this.props.id,
 	                style: style,
 	                onClick: function onClick() {
-	                    return _this2.swapper(_this2.state.sor, _this2.state.oszlop);
+	                    return _this2.swapper(_this2.props.id, _this2.props.horizontal, _this2.props.vertical);
 	                }
 	            });
 	        }

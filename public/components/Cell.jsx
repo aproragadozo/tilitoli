@@ -9,8 +9,9 @@ class Cell extends React.Component {
         this.swapper = this.swapper.bind(this);
     }
 
-    swapper(r, c) {
+    swapper(id, r, c) {
         var cellInfo = {};
+        cellInfo.id = id;
         cellInfo.sor = r;
         cellInfo.oszlop = c;
         this.props.clickHandler(cellInfo);
@@ -26,14 +27,14 @@ class Cell extends React.Component {
             height: this.props.img.height / this.props.size,
             backgroundPosition: this.props.backgroundPos,
             backgroundImage: "url(" + this.props.img.src + ")",
-            left: this.props.img.width / this.props.size * Math.abs(this.state.sor),
-            top: this.props.img.height / this.props.size * Math.abs(this.state.oszlop)
+            left: this.props.img.width / this.props.size * Math.abs(this.props.horizontal),
+            top: this.props.img.height / this.props.size * Math.abs(this.props.vertical)
         };
-        return ( <div 
+        return ( <div id={this.props.id}
             style = { style }
             onClick = {
                 () =>
-                this.swapper(this.state.sor, this.state.oszlop)
+                this.swapper(this.props.id, this.props.horizontal, this.props.vertical)
             }
             />
         )
