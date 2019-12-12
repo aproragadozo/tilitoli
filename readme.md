@@ -10,11 +10,15 @@ A sliding puzzle that doesn't really work (yet!), written in React.
 
 2. In the root of the project folder, run `npm install` to generate the `node_modules` folder with the project dependencies.
 
-3. Run `npm run` to make Webpack build and bundle the project.
+3. Run `npm run start`
 
-4. Run `node server.js` to start the Express server, and serve the project locally.
+    1. to make Webpack build and bundle the project,
 
-5. Go to `localhost:3000` in your browser of choice.
+    2. run `node server.js` to start the Express server, and
+
+    3. serve the project locally.
+
+4. Go to `localhost:3000` in your browser of choice.
 
 ### In the wild
 
