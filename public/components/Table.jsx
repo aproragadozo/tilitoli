@@ -88,7 +88,8 @@ class Table extends React.Component {
         var img = new Image();
         var cellDimensions = 4;
         //var stil = { position: 'relative', width: '410px', height: 'auto' };
-        img.src = "https://i.pinimg.com/736x/8c/bd/c8/8cbdc87ea653132a0fe6207007d915c1--pasta-cat-love.jpg";
+        img.src = "https://juicebubble.co.za/wp-content/uploads/2018/03/space-invaders-navy-400x400.png";
+        //img.src = "https://i.pinimg.com/736x/8c/bd/c8/8cbdc87ea653132a0fe6207007d915c1--pasta-cat-love.jpg";
         var negyzethalo = [];
         for(var r=0; r<this.state.grid.length; r++) {
             for(var c=0; c<this.state.grid[r].length; c++) {
