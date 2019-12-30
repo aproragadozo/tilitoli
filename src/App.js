@@ -44,7 +44,7 @@ class Cell extends React.Component {
     <div
       style = { style }
       onClick = {this.props.onClick.bind(this, this.props.index)}>
-        {(this.props.hole === this.props.number)?"":this.props.number + 1}
+        {(this.props.hole === number)?"":number + 1}
     </div>
     )
   }
@@ -53,14 +53,18 @@ class Cell extends React.Component {
 class Table extends React.Component {
   constructor(props) {
     super(props);
+    // you need to duplicate the component scope
+    // to later be able to call a component method
+    // from within the state constructor
     const myself = this;
     let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     this.state = {
       // this is what the scrambler function should scramble
-        numbers : myself.scrambler(numbers),
-        // this should change, and then the Tilitoli class as well
-        hole: this.props.hole,
-        fekete: { src: "https://i.pinimg.com/736x/25/10/1f/25101f6abb216898babcb5498197f5cb.jpg", width: 400, height: 400 }
+      //numbers: myself.scrambler(numbers),
+      numbers : numbers,
+      // this should change, and then the Tilitoli class as well
+      hole: this.props.hole,
+      fekete: { src: "https://i.pinimg.com/736x/25/10/1f/25101f6abb216898babcb5498197f5cb.jpg", width: 400, height: 400 }
     };
 
     this.katt = this.katt.bind(this);
@@ -70,11 +74,49 @@ class Table extends React.Component {
     this.checkSwap = this.checkSwap.bind(this);
     this.getCoords = this.getCoords.bind(this);
     this.scrambler = this.scrambler.bind(this);
+    this.tempSwap = this.tempSwap.bind(this);
+  }
+  // function used by scrambler to swap items
+  // (could possibly reuse the existing swapper?)
+  tempSwap(arr, a, b) {
+    return arr.map((current, idx) => {
+      if (idx === a) return arr[b]
+      if (idx === b) return arr[a]
+      return current
+    });
   }
   // function to scramble the tiles
   // I'll need to call it in the constructor to set the state
+  
+  scrambler(arr, holeIndex){
+    let algorithm = ["up", "up","up", "left","down", "down","down", "left","up", "up","up", "left","down", "down", "down", "right","up", "up", "up", "right","down", "down", "down", "right"];
+    for (const elem of algorithm) {
+      if(elem==="up"){
+        //[ list[x], list[y] ] = [ list[y], list[x] ];
+        this.tempSwap(arr, holeIndex, holeIndex-4)
+        this.setState({numbers: arr, hole: arr.indexOf(15)})
+      }
+      if(elem==="left"){
+        this.tempSwap(arr, holeIndex, holeIndex-1)
+        this.setState({numbers: arr, hole: arr.indexOf(15)})
+      }
+      if(elem==="down"){
+        this.tempSwap(arr, holeIndex, holeIndex+4);
+        this.setState({numbers: arr, hole: arr.indexOf(15)})
+      }
+      if(elem==="right"){
+        this.tempSwap(arr, holeIndex, holeIndex+1);
+        this.setState({numbers: arr, hole: arr.indexOf(15)})
+      }
+    }
+  }
+  componentDidMount(){
+    console.log("un!");
+    this.scrambler(this.state.numbers, this.state.hole);
+    console.log("dos!");
+  }
+  /*
   scrambler(array){
-    console.log("itt vagyok!");
     var currentIndex = array.length, temporaryValue, randomIndex;
 
     // While there remain elements to shuffle...
@@ -92,6 +134,7 @@ class Table extends React.Component {
 
     return array;
   }
+  */
 
   getCoords(index, rows, cols) {
     return {
@@ -161,7 +204,7 @@ getBackgroundPos(index, img) {
         ))}
       </div >)
   }
-                  };
+};
 
 class Tilitoli extends React.Component{
   render() {
