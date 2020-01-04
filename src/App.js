@@ -5,14 +5,13 @@ import './App.css';
 class Cell extends React.Component {
   constructor(props) {
     super(props);
-    this.swapper = this.swapper.bind(this);
+    // my first ever ref!
+    // (completely unnecessary, though :)
+    this.cellInstanceReference = React.createRef();
     this.getCoords = this.getCoords.bind(this);
   }
-  // this isn't used any longer, check props.onClick
-  swapper() {
-    var index = this.props.index;
-    let number = this.props.number;
-    this.props.onClick(index);
+  componentDidMount() {
+    this.props.onRef(this)
   }
   getCoords(index, rows, cols) {
       return {
@@ -20,6 +19,15 @@ class Cell extends React.Component {
         row: index % cols
       }
     }
+  // replacing direct call to parent's method
+  // with own method that calls parent's method
+  // passing it data
+  // (this is how swapping
+  // (and keeping track of where the blank cell is!)
+  // should ultimately be handled)
+  katt = () => {
+    this.props.parentCallback(this.props.index);
+  }
   render() {
     var coords = this.getCoords(this.props.index, this.props.rows, this.props.cols);
     var style = {
@@ -42,8 +50,9 @@ class Cell extends React.Component {
     var number = this.props.number;
     return (
     <div
+      ref={this.props.innerRef}
       style = { style }
-      onClick = {this.props.onClick.bind(this, this.props.index)}>
+      onClick = {this.katt}>
         {(this.props.hole === number)?"":number + 1}
     </div>
     )
@@ -56,85 +65,42 @@ class Table extends React.Component {
     // you need to duplicate the component scope
     // to later be able to call a component method
     // from within the state constructor
-    const myself = this;
+    // const myself = this;
+    // the constant identifier for each cell
+    const identifiers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    // I should rename this "positions" or similar
     let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     this.state = {
-      // this is what the scrambler function should scramble
-      //numbers: myself.scrambler(numbers),
+      solved: false,
+      identifiers: identifiers,
       numbers : numbers,
-      // this should change, and then the Tilitoli class as well
-      hole: this.props.hole,
+      // this is actually invariable,
+      // so should not be doing anything in state
+      hole: 15,
+      // this is what we'll rely on to track the blank cell around the grid
+      holePosition: 15,
       fekete: { src: "https://i.pinimg.com/736x/25/10/1f/25101f6abb216898babcb5498197f5cb.jpg", width: 400, height: 400 }
     };
 
-    this.katt = this.katt.bind(this);
     this.getBackgroundPos = this.getBackgroundPos.bind(this);
     this.swap = this.swap.bind(this);
     this.getNewLayout = this.getNewLayout.bind(this);
     this.checkSwap = this.checkSwap.bind(this);
     this.getCoords = this.getCoords.bind(this);
-    this.scrambler = this.scrambler.bind(this);
-    this.tempSwap = this.tempSwap.bind(this);
   }
-  // function used by scrambler to swap items
-  // (could possibly reuse the existing swapper?)
-  tempSwap(arr, a, b) {
-    return arr.map((current, idx) => {
-      if (idx === a) return arr[b]
-      if (idx === b) return arr[a]
-      return current
-    });
-  }
-  // function to scramble the tiles
-  // I'll need to call it in the constructor to set the state
-  
-  scrambler(arr, holeIndex){
-    let algorithm = ["up", "up","up", "left","down", "down","down", "left","up", "up","up", "left","down", "down", "down", "right","up", "up", "up", "right","down", "down", "down", "right"];
-    for (const elem of algorithm) {
-      if(elem==="up"){
-        //[ list[x], list[y] ] = [ list[y], list[x] ];
-        this.tempSwap(arr, holeIndex, holeIndex-4)
-        this.setState({numbers: arr, hole: arr.indexOf(15)})
-      }
-      if(elem==="left"){
-        this.tempSwap(arr, holeIndex, holeIndex-1)
-        this.setState({numbers: arr, hole: arr.indexOf(15)})
-      }
-      if(elem==="down"){
-        this.tempSwap(arr, holeIndex, holeIndex+4);
-        this.setState({numbers: arr, hole: arr.indexOf(15)})
-      }
-      if(elem==="right"){
-        this.tempSwap(arr, holeIndex, holeIndex+1);
-        this.setState({numbers: arr, hole: arr.indexOf(15)})
-      }
-    }
-  }
-  componentDidMount(){
-    console.log("un!");
-    this.scrambler(this.state.numbers, this.state.hole);
-    console.log("dos!");
-  }
+
   /*
-  scrambler(array){
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-
-      // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
+  checkSolved = (acc, current, index) => {
+    if(current === this.state.identifiers[index]) {
+      acc = true
     }
-
-    return array;
+    acc = false;
+    return acc;
   }
   */
+  checkSolved(a1, a2) {
+    return JSON.stringify(a1)==JSON.stringify(a2);
+  }
 
   getCoords(index, rows, cols) {
     return {
@@ -147,9 +113,7 @@ class Table extends React.Component {
     var toObject = this.getCoords(toIndex, rows, cols);
     return (Math.abs(fromObject.row - toObject.row) + Math.abs(fromObject.col - toObject.col) === 1);
   }
-  katt(index) {
-    this.swap(index);
-  }
+
   getNewLayout(numbers, fromIndex, toIndex) {
     var numbers = numbers.slice(0);
     let temp = numbers[toIndex];
@@ -158,27 +122,35 @@ class Table extends React.Component {
     return numbers;
   }
   swap(cellIndex){
-    let hole = this.state.hole;
     let rows = this.props.rows;
     let cols = this.props.cols;
     let numbers = this.state.numbers;
-    let currentHole = numbers.indexOf(hole);
-    //console.table(numbers);
+    let currentHole = this.state.holePosition;
+    // check if clicked cell next to blank cell
     if(this.checkSwap(cellIndex, currentHole, rows, cols)) {
       let newNumbers = this.getNewLayout(numbers, cellIndex, currentHole);
-      this.setState({numbers: newNumbers});
+      // test
+      console.table(newNumbers);
+      console.table(this.state.identifiers);
+      // update the order of cells & the position of the blank
+      this.setState({numbers: newNumbers, holePosition: cellIndex});
+      // check if solved
+      if(this.checkSolved(this.state.identifiers, this.state.numbers)){
+        console.log("barack!")
+        this.setState({solved: true});
+      }
     }
   }
-getBackgroundPos(index, img) {
-    let pos;
-    let coords = this.getCoords(index, this.props.rows, this.props.cols);
-    coords.row *= -1;
-    coords.col *= -1;
-    let xPos = img.width / 4 * coords.row + 'px';
-    let yPos = img.height / 4 * coords.col + 'px';
-    return pos = xPos + ' ' + yPos;
-    
-  }
+  getBackgroundPos(index, img) {
+      let pos;
+      let coords = this.getCoords(index, this.props.rows, this.props.cols);
+      coords.row *= -1;
+      coords.col *= -1;
+      let xPos = img.width / 4 * coords.row + 'px';
+      let yPos = img.height / 4 * coords.col + 'px';
+      return pos = xPos + ' ' + yPos;
+      
+    }
   render() {
     var img = new Image();
     img.src = "https://i.pinimg.com/736x/09/e6/6d/09e66dd18f0488a30753b8c20d633b16--andy-warhol-visual-arts.jpg";
@@ -186,20 +158,23 @@ getBackgroundPos(index, img) {
     img.height = 400;
     var lyuk = new Image();
     lyuk.src = "https://i.pinimg.com/736x/25/10/1f/25101f6abb216898babcb5498197f5cb.jpg";
-    
+    // conditional rendering
+    if(this.state.solved) {
+      return (<div>SOLVED!</div>)
+    }
     return (
       <div>
         {this.state.numbers.map((number, index) => (
           <Cell
+            onRef={ref => (this.child = ref)}
             rows = {this.props.rows}
             cols = {this.props.cols}
-            hole = {this.props.hole}
-            img = {(number === this.props.hole) ? lyuk : img}
+            img = {(number === this.state.hole) ? lyuk : img}
             backgroundPos = {this.getBackgroundPos(number, img)}
-            index = {index}
+            index = {this.state.identifiers[index]}
             number = {number}
-            key = {number}
-            onClick = {this.swap}
+            key={this.state.identifiers[index]}
+            parentCallback = {this.swap}
             />
         ))}
       </div >)
@@ -209,9 +184,9 @@ getBackgroundPos(index, img) {
 class Tilitoli extends React.Component{
   render() {
     return(
-      <div className = "wrapper" >
-      <Table rows={4} cols={4} hole={15}/>
-        </div>
+      <div className = "wrapper">
+        <Table rows={4} cols={4}/>
+      </div>
     )
   }
 }
