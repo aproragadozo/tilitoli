@@ -1,4 +1,5 @@
 import React from 'react';
+// eslint-disable-next-line
 import logo from './logo.svg';
 import './App.css';
 
@@ -43,9 +44,13 @@ class Cell extends React.Component {
       top: (this.props.img.height / 4) * coords.col,
       fontSize: "8px"
     };
+    // eslint-disable-next-line
     var hole = this.props.hole;
+    // eslint-disable-next-line
     var rows = this.props.rows;
+    // eslint-disable-next-line
     var cols = this.props.cols;
+    // eslint-disable-next-line
     var index = this.props.index;
     var number = this.props.number;
     return (
@@ -65,6 +70,7 @@ class Table extends React.Component {
     // you need to duplicate the component scope
     // to later be able to call a component method
     // from within the state constructor
+    // eslint-disable-next-line
     const myself = this;
     const hole = 15;
     // the constant identifier for each cell
@@ -72,9 +78,18 @@ class Table extends React.Component {
 
     // (I should rename this "positions" or similar)
     // this hard-coded scramble for debugging until properly scrambled
-    let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 12, 13, 14, 11]
+    //let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 12, 13, 14, 11]
+
+    // you cannot call scrambler at this point yet,
+    // because there is no state yet,
+    // and scrambler calls swap currently,
+    // which needs this.state.numbers
+    // (so this would even threaten a recursive infinite loop)
+
+    let numbers = myself.scrambler(identifiers)[0];
     // ultimately, this is going to be numbers
-    //numbers : myself.scrambler(identifiers),
+    //numbers : myself.scrambler(identifiers)
+    let holePosition = numbers.indexOf(hole);
     this.state = {
       checkSolved: this.checkSolved.bind(this),
       solved: false,
@@ -87,7 +102,7 @@ class Table extends React.Component {
       // trouble is, this "numbers" isn't "this.state.numbers",
       // which I would need to be able to
       // scramble cells from within the constructor
-      holePosition: numbers.indexOf(hole),
+      holePosition: holePosition,
       fekete: { src: "https://i.pinimg.com/736x/25/10/1f/25101f6abb216898babcb5498197f5cb.jpg", width: 400, height: 400 }
     };
 
@@ -103,6 +118,7 @@ class Table extends React.Component {
   // I'll need to call it in the constructor to set the state
   scrambler = (array) => {
     array = array.slice(0);
+    /* commenting this original randomizer bit out for now
     let currentIndex = array.length, temporaryValue, randomIndex;
 
     // While there remain elements to shuffle...
@@ -117,8 +133,23 @@ class Table extends React.Component {
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
     }
-
-    return array;
+    */
+    // attempting to call swap
+    //array = this.state.numbers;
+    // re-create this.swap without reference to this.state
+    let cellIndex = 11;
+    let rows = this.props.rows;
+    let cols = this.props.cols;
+    // let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    let currentHole = 15;
+    // check if clicked cell next to blank cell
+    if(this.checkSwap(cellIndex, currentHole, rows, cols)) {
+      let newNumbers = this.getNewLayout(array, cellIndex, currentHole);
+      // need to also return the new holePosition
+      let holePosition = newNumbers.indexOf(15);
+      console.table(newNumbers);
+      return [newNumbers, holePosition];
+  }
   }
 
   checkSolved(arr1, arr2) {
@@ -142,7 +173,7 @@ class Table extends React.Component {
   }
 
   getNewLayout(numbers, fromIndex, toIndex) {
-    var numbers = numbers.slice(0);
+    numbers = numbers.slice(0);
     let temp = numbers[toIndex];
     numbers[toIndex] = numbers[fromIndex];
     numbers[fromIndex] = temp;
@@ -164,6 +195,7 @@ class Table extends React.Component {
 }
 
   getBackgroundPos(index, img) {
+    // eslint-disable-next-line
       let pos;
       let coords = this.getCoords(index, this.props.rows, this.props.cols);
       coords.row *= -1;
@@ -197,7 +229,10 @@ class Table extends React.Component {
   reRenderWhenSolved = () => {
     console.log("yay");
     this.setState((state) => {
-      return {numbers:this.scrambler(this.state.numbers), solved: false}
+      return {
+        numbers:this.scrambler(this.state.numbers)[0],
+        holePosition:this.scrambler(this.state.numbers)[1],
+        solved: false}
     })
   }
 
