@@ -6,13 +6,7 @@ import './App.css';
 class Cell extends React.Component {
   constructor(props) {
     super(props);
-    // my first ever ref!
-    // (completely unnecessary, though :)
-    this.cellInstanceReference = React.createRef();
     this.getCoords = this.getCoords.bind(this);
-  }
-  componentDidMount() {
-    this.props.onRef(this)
   }
   getCoords(index, rows, cols) {
       return {
@@ -58,7 +52,7 @@ class Cell extends React.Component {
       ref={this.props.innerRef}
       style = { style }
       onClick = {(e) => this.katt(e)}>
-        {(this.props.hole === number)?"":number + 1}
+        {(this.props.hole === number)?"":number+1}
     </div>
     )
   }
@@ -86,9 +80,14 @@ class Table extends React.Component {
     // which needs this.state.numbers
     // (so this would even threaten a recursive infinite loop)
     // solving this by not referencing state within scrambler
-    let numbers = myself.scrambler(identifiers)[0];
+    //let numbers = myself.scrambler(identifiers)[0];
+    let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 12, 13, 14, 11];
     let holePosition = numbers.indexOf(hole);
     this.state = {
+      // the counter for the shuffle
+      shiftCounter: 0,
+      // to use with a setTimeOut-based shuffle
+      isShuffling: false,
       checkSolved: this.checkSolved.bind(this),
       solved: false,
       identifiers: identifiers,
@@ -141,11 +140,10 @@ class Table extends React.Component {
     // let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     let currentHole = 15;
     // check if clicked cell next to blank cell
-    if(this.checkSwap(cellIndex, currentHole, rows, cols)) {
+    if(this.canMove(cellIndex)) {
       let newNumbers = this.getNewLayout(array, cellIndex, currentHole);
       // need to also return the new holePosition
       let holePosition = newNumbers.indexOf(15);
-      console.table(newNumbers);
       return [newNumbers, holePosition];
   }
   }
@@ -174,31 +172,11 @@ class Table extends React.Component {
     return (Math.abs(fromObject.row - toObject.row) + Math.abs(fromObject.col - toObject.col) === 1);
   }
 
-  /*
-    an alternative to checkSwap, where
-    you see if a move to toIndex
-    would result in a valid move
-  */
-  /*
-    this would sadly also need a reference to state,
-    that is, state.holePosition.
-    perhaps I can pass holePosition as a prop to work around this?
-    or use state here, but re-create this method for scrambler
-    without a reference to state?
-  */
   canMove = (destination) => {
-    if(destination < 0 || destination >= this.props.rows * this.props.rows) {
+    if(destination < 0 || destination >= 16) {
       return false
     }
-    /*
-      this would also require
-      to ditch getCoords,
-      and instead make it so that
-      the grid starts at 1,
-      and the hole value is 0, with a position of 15
-    */
     let diff = this.state.holePosition - destination;
-    console.log(diff);
     if(diff === -1) {
       return destination % this.props.rows != 0;
     }
@@ -207,6 +185,40 @@ class Table extends React.Component {
     }
     else {
       return Math.abs(diff) === this.props.rows;
+    }
+  }
+
+  shuffle = () => {
+    if (this.state.shiftCounter >= 50) {
+      this.setState((state) => {
+        return {shiftCounter: 0, isShuffling: false }
+      });
+    }
+    else {
+      this.setState((state) => {
+        return {isShuffling: true}
+      });
+    }
+    this.setState((state) => {
+      return {shiftCounter: state.shiftCounter + 1}
+    })
+    let offsets = [-4, 4, -1, 1];
+    let randomOffset = offsets[Math.floor(Math.random()*offsets.length)];
+    let neighbour = this.state.holePosition + randomOffset;
+    this.swap(neighbour);
+  }
+
+  componentDidUpdate() {
+
+    if(this.state.isShuffling && this.state.shiftCounter <= 50) {
+      this.shuffle();
+    }
+
+  }
+
+  componentDidMount() {
+    if(this.state.isShuffling && this.state.shiftCounter <= 50) {
+      this.shuffle();
     }
   }
 
@@ -223,7 +235,7 @@ class Table extends React.Component {
     let numbers = this.state.numbers;
     let currentHole = this.state.holePosition;
     // check if clicked cell next to blank cell
-    if(this.checkSwap(cellIndex, currentHole, rows, cols)) {
+    if(this.canMove(cellIndex)) {
       let newNumbers = this.getNewLayout(numbers, cellIndex, currentHole);
       // update the order of cells & the position of the blank
       this.setState((state) => {
@@ -243,19 +255,6 @@ class Table extends React.Component {
       return pos = xPos + ' ' + yPos;
       
     }
-/*
-    scramble = (arr) => {
-      for (let elem in arr) {
-        if(elem == "up") {
-          console.log(this.state.holePosition);
-          this.swap(this.state.holePosition -4)
-        }
-        else if(elem === "left") {
-          this.swap(this.state.holePosition - 1)
-        }
-      }
-    }
-*/
 
   static getDerivedStateFromProps(props, state) {
     if(state.checkSolved(state.numbers, state.identifiers)) {
@@ -265,13 +264,19 @@ class Table extends React.Component {
   }
 
   reRenderWhenSolved = () => {
-    console.log("yay");
+    let moves = new Array(100);
+    this.shuffle(moves);
+    this.setState((state) => {
+      return {solved: false, }
+    })
+    /*
     this.setState((state) => {
       return {
         numbers:this.scrambler(this.state.numbers)[0],
         holePosition:this.scrambler(this.state.numbers)[1],
         solved: false}
     })
+    */
   }
 
   render() {
@@ -306,7 +311,6 @@ class Table extends React.Component {
       <div>
         {this.state.numbers.map((number, index) => (
           <Cell
-            onRef={ref => (this.child = ref)}
             rows = {this.props.rows}
             cols = {this.props.cols}
             img = {(number === this.state.hole) ? lyuk : img}
