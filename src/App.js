@@ -85,10 +85,8 @@ class Table extends React.Component {
     // and scrambler calls swap currently,
     // which needs this.state.numbers
     // (so this would even threaten a recursive infinite loop)
-
+    // solving this by not referencing state within scrambler
     let numbers = myself.scrambler(identifiers)[0];
-    // ultimately, this is going to be numbers
-    //numbers : myself.scrambler(identifiers)
     let holePosition = numbers.indexOf(hole);
     this.state = {
       checkSolved: this.checkSolved.bind(this),
@@ -169,7 +167,47 @@ class Table extends React.Component {
   checkSwap(fromIndex, toIndex, rows, cols) {
     var fromObject = this.getCoords(fromIndex, rows, cols);
     var toObject = this.getCoords(toIndex, rows, cols);
+    // see if canMove would return the same result
+    if(this.state !== undefined) {
+      console.log(this.canMove(fromIndex));
+    }
     return (Math.abs(fromObject.row - toObject.row) + Math.abs(fromObject.col - toObject.col) === 1);
+  }
+
+  /*
+    an alternative to checkSwap, where
+    you see if a move to toIndex
+    would result in a valid move
+  */
+  /*
+    this would sadly also need a reference to state,
+    that is, state.holePosition.
+    perhaps I can pass holePosition as a prop to work around this?
+    or use state here, but re-create this method for scrambler
+    without a reference to state?
+  */
+  canMove = (destination) => {
+    if(destination < 0 || destination >= this.props.rows * this.props.rows) {
+      return false
+    }
+    /*
+      this would also require
+      to ditch getCoords,
+      and instead make it so that
+      the grid starts at 1,
+      and the hole value is 0, with a position of 15
+    */
+    let diff = this.state.holePosition - destination;
+    console.log(diff);
+    if(diff === -1) {
+      return destination % this.props.rows != 0;
+    }
+    else if(diff === 1) {
+      return this.state.holePosition % this.props.rows != 0;
+    }
+    else {
+      return Math.abs(diff) === this.props.rows;
+    }
   }
 
   getNewLayout(numbers, fromIndex, toIndex) {
