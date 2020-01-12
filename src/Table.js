@@ -7,41 +7,25 @@ class Table extends React.Component {
       // you need to duplicate the component scope
       // to later be able to call a component method
       // from within the state constructor
-      // eslint-disable-next-line
-      const myself = this;
-      const hole = 15;
-      // the constant identifier for each cell
-      const identifiers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-      let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 12, 13, 14, 11];
-      let holePosition = numbers.indexOf(hole);
+      //const myself = this;
       this.state = {
         // the counter for the shuffle
         shiftCounter: 0,
-        // to use with a setTimeOut-based shuffle
+        // check this when mounting and updating
+        // to do the shuffle
         isShuffling: false,
         checkSolved: this.checkSolved.bind(this),
         solved: false,
-        identifiers: identifiers,
-        numbers: numbers,
-        // this is actually invariable,
-        // so should not be doing anything in state
-        hole: hole,
+        numbers: this.props.numbers,
         // this is what we'll rely on to track the blank cell around the grid
         // trouble is, this "numbers" isn't "this.state.numbers",
         // which I would need to be able to
         // scramble cells from within the constructor
-        holePosition: holePosition,
-        fekete: { src: "https://i.pinimg.com/736x/25/10/1f/25101f6abb216898babcb5498197f5cb.jpg", width: 400, height: 400 }
+        holePosition: this.props.numbers.indexOf(this.props.hole)
       };
-  
-      this.getBackgroundPos = this.getBackgroundPos.bind(this);
-      this.swap = this.swap.bind(this);
-      this.getNewLayout = this.getNewLayout.bind(this);
-      this.getCoords = this.getCoords.bind(this);
-      this.checkSolved = this.checkSolved.bind(this);
     }
   
-    checkSolved(arr1, arr2) {
+    checkSolved = (arr1, arr2) => {
       for(let i = arr1.length; i--;) {
           if(arr1[i] !== arr2[i])
               return false;
@@ -49,7 +33,7 @@ class Table extends React.Component {
       return true;
     }
   
-    getCoords(index, rows, cols) {
+    getCoords = (index, rows, cols) => {
       return {
         col: Math.floor(index/cols),
         row: index % cols
@@ -73,6 +57,9 @@ class Table extends React.Component {
     }
   
     shuffle = () => {
+      this.setState((state) => {
+        return {solved: false}
+      })
       if (this.state.shiftCounter >= 50) {
         this.setState((state) => {
           return {shiftCounter: 0, isShuffling: false }
@@ -97,23 +84,25 @@ class Table extends React.Component {
       if(this.state.isShuffling && this.state.shiftCounter <= 50) {
         this.shuffle();
       }
-  
     }
   
     componentDidMount() {
+      /*
+      // this doesn't work for some reason
       if(this.state.isShuffling && this.state.shiftCounter <= 50) {
         this.shuffle();
       }
+      */
+      this.shuffle();
     }
-  
-    getNewLayout(numbers, fromIndex, toIndex) {
+    getNewLayout = (numbers, fromIndex, toIndex) => {
       numbers = numbers.slice(0);
       let temp = numbers[toIndex];
       numbers[toIndex] = numbers[fromIndex];
       numbers[fromIndex] = temp;
       return numbers;
     }
-    swap(cellIndex){
+    swap = (cellIndex) => {
       let numbers = this.state.numbers;
       let currentHole = this.state.holePosition;
       // check if clicked cell next to blank cell
@@ -124,9 +113,15 @@ class Table extends React.Component {
           return {numbers: newNumbers, holePosition: cellIndex}
         });
     }
+    // check if solved
+    if(this.checkSolved(this.state.numbers, this.props.identifiers)) {
+      this.setState((state) => {
+        return {solved: true}
+      })
+    }
   }
   
-    getBackgroundPos(index, img) {
+    getBackgroundPos = (index, img) => {
       // eslint-disable-next-line
         let pos;
         let coords = this.getCoords(index, this.props.rows, this.props.cols);
@@ -137,20 +132,21 @@ class Table extends React.Component {
         return pos = xPos + ' ' + yPos;
         
       }
-  
+  // I'm not sure why this is necessary
+  // and couldn't be called at the end of a swap
     static getDerivedStateFromProps(props, state) {
-      if(state.checkSolved(state.numbers, state.identifiers)) {
+      if(state.checkSolved(state.numbers, props.identifiers)) {
         return {solved: true}
       }
       return null;
     }
-  
     reRenderWhenSolved = () => {
-      let moves = new Array(100);
-      this.shuffle(moves);
+      // wasn't using this moves array anyway
+      //let moves = new Array(100);
       this.setState((state) => {
         return {solved: false}
       })
+      this.shuffle();
     }
   
     render() {
@@ -180,20 +176,25 @@ class Table extends React.Component {
                 New Game</button>
           </div>
           )}
-  
+      
+      let tableStyle = {
+        width: '400px',
+        height: '400px',
+        position: 'relative'
+      }
       return (
-        <div>
+        <div style= { tableStyle }>
           {this.state.numbers.map((number, index) => (
             <Cell
               rows = {this.props.rows}
               cols = {this.props.cols}
-              img = {(number === this.state.hole) ? lyuk : img}
+              img = {(number === this.props.hole) ? lyuk : img}
               backgroundPos = {this.getBackgroundPos(number, img)}
-              index = {this.state.identifiers[index]}
+              index = {this.props.identifiers[index]}
               number = {number}
-              key={this.state.identifiers[index]}
+              key={this.props.identifiers[index]}
               parentCallback = {this.swap}
-              hole = {this.state.hole}
+              hole = {this.props.hole}
               />
           ))}
         </div >)
