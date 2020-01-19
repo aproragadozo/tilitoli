@@ -28,6 +28,8 @@ start = () => {
 }
 
   render() {
+    // starting state for Table that gets overwritten
+    // at Table.componentDidMount
     let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 12, 13, 14, 11];
     // the constant identifier for each cell
     const identifiers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];

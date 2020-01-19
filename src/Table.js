@@ -142,7 +142,7 @@ class Table extends React.Component {
     }
     reRenderWhenSolved = () => {
       // wasn't using this moves array anyway
-      //let moves = new Array(100);
+      //let moves = new Array(50);
       this.setState((state) => {
         return {solved: false}
       })
