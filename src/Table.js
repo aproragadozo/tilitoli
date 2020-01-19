@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import Cell from './Cell.js';
 
 class Table extends React.Component {
@@ -21,7 +22,10 @@ class Table extends React.Component {
         // trouble is, this "numbers" isn't "this.state.numbers",
         // which I would need to be able to
         // scramble cells from within the constructor
-        holePosition: this.props.numbers.indexOf(this.props.hole)
+        holePosition: this.props.numbers.indexOf(this.props.hole),
+        // setting up a starting image
+        image: 'https://unsplash.it/400/400'
+        //image: 'https://source.unsplash.com/random/400x400'
       };
     }
   
@@ -93,6 +97,14 @@ class Table extends React.Component {
         this.shuffle();
       }
       */
+     /*
+      axios.get(this.state.image)
+        .then(response => {
+          this.setState((state) => {
+            return {image: response}
+          })
+        })
+        */
       this.shuffle();
     }
     getNewLayout = (numbers, fromIndex, toIndex) => {
@@ -151,7 +163,9 @@ class Table extends React.Component {
   
     render() {
       var img = new Image();
-      img.src = "https://i.pinimg.com/736x/09/e6/6d/09e66dd18f0488a30753b8c20d633b16--andy-warhol-visual-arts.jpg";
+      img.src = this.state.image;
+      //img.src = 'https://source.unsplash.com/random/400x400'
+      // img.src = "https://i.pinimg.com/736x/09/e6/6d/09e66dd18f0488a30753b8c20d633b16--andy-warhol-visual-arts.jpg";
       img.width = 400;
       img.height = 400;
       var lyuk = new Image();
