@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/aproragadozo/tilitoli.svg?branch=master)](https://travis-ci.com/aproragadozo/tilitoli)
+
+# Dili-Toli!
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
