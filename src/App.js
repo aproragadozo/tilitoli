@@ -27,6 +27,16 @@ start = () => {
   })
 }
 
+callApiForImages = () => {
+  // the id of the flickr group you want to use
+  // is 17449586@N00
+  ...
+}
+
+resizeImages = (pic) => {
+  ...
+}
+
   render() {
     // starting state for Table that gets overwritten
     // at Table.componentDidMount
