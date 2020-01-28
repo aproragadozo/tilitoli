@@ -163,7 +163,7 @@ class Table extends React.Component {
   
     render() {
       var img = new Image();
-      img.src = this.state.image;
+      img.src = this.props.image;
       //img.src = 'https://source.unsplash.com/random/400x400'
       // img.src = "https://i.pinimg.com/736x/09/e6/6d/09e66dd18f0488a30753b8c20d633b16--andy-warhol-visual-arts.jpg";
       img.width = 400;
