@@ -29,6 +29,11 @@ class Table extends React.Component {
       };
     }
   
+    // calling the parent to get new image
+    resetImage = () => {
+      this.props.parentCallback();
+    }
+
     checkSolved = (arr1, arr2) => {
       for(let i = arr1.length; i--;) {
           if(arr1[i] !== arr2[i])
@@ -97,7 +102,7 @@ class Table extends React.Component {
         this.shuffle();
       }
       */
-     /*
+      /*
       axios.get(this.state.image)
         .then(response => {
           this.setState((state) => {
@@ -153,6 +158,7 @@ class Table extends React.Component {
       return null;
     }
     reRenderWhenSolved = () => {
+      this.resetImage();
       // wasn't using this moves array anyway
       //let moves = new Array(50);
       this.setState((state) => {

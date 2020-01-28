@@ -41,7 +41,7 @@ getSquareImagesFromFlickr = (q) => {
 setImages = () => {
   // the flickr group is https://www.flickr.com/groups/squareimg/
   let group = "17449586@N00";
-  let noOfImages = 6;
+  let noOfImages = 30;
   let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY}&group_id=${group}&extras=url_w&per_page=${noOfImages}&page=1&format=json&nojsoncallback=1`;
 
   let randomIndex = Math.floor(Math.random() * noOfImages);
@@ -91,7 +91,8 @@ componentDidMount() {
             numbers={numbers}
             hole={15}
             identifiers = {identifiers}
-            image={this.state.image}/>
+            image={this.state.image}
+            parentCallback = {this.setImages}/>
         </div>
       )
     }
