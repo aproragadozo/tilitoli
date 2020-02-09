@@ -13,6 +13,8 @@ class Tilitoli extends React.Component{
     super(props);
     this.state = {
       image: 'https://source.unsplash.com/random/400x400',
+      images: [],
+      ready:false,
       gameOn: false,
       // moved the counter and isShuffling
       // here from Table; Table methods need to be also (?)
@@ -39,16 +41,28 @@ getSquareImagesFromFlickr = (q) => {
 }
 
 setImages = () => {
+  this.setState((state) => {
+    return {images: [], ready: false}
+  })
+  console.log("go");
   // the flickr group is https://www.flickr.com/groups/squareimg/
   let group = "17449586@N00";
-  let noOfImages = 30;
-  let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY}&group_id=${group}&extras=url_w&per_page=${noOfImages}&page=1&format=json&nojsoncallback=1`;
+  let imagesPerPage = 100;
+  let noOfImages = 6;
+  let randomIndices = [];
+  let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
 
-  let randomIndex = Math.floor(Math.random() * noOfImages);
+  while(noOfImages >0) {
+    randomIndices.push(Math.floor(Math.random() * imagesPerPage));
+    noOfImages -= 1;
+  }
+  // let randomIndex = Math.floor(Math.random() * imagesPerPage);
   let images = this.getSquareImagesFromFlickr(query)
     .then(response => {
+      let images = randomIndices.map(randomIndex => 
+        response.data.photos.photo[randomIndex].url_w);
       this.setState((state) => {
-        return {image: response.data.photos.photo[randomIndex].url_w}
+        return {images: images, ready: true}
       })
     })
     .catch(error => {
@@ -82,6 +96,10 @@ componentDidMount() {
       fontSize: '8vw',
       cursor: 'pointer'
     }
+    {/*
+      we'll be needing this as well,
+      in the intermediary (between app and table)
+      component
     if(this.state.gameOn) {
       return(
         <div className="wrapper">
@@ -96,13 +114,33 @@ componentDidMount() {
         </div>
       )
     }
+    */}
+    if(this.state.ready) {
+      return (
+        <div className="imageOptionWrapper">
+          <div className="top">
+            Dili-Toli!
+          </div>
+          {this.state.images.map((image, index) => (
+            <img key={index} src={image} className={`option${index}`}/>
+          ))}
+          <div className="bottom"
+            onClick={(e) => this.setImages(e)}>
+              Get new images
+          </div>
+        </div>
+      )
+    }
     return (
       <div className="wrapper">
+      {/*
         <div
           style={ startButtonStyle }
           onClick={this.start}>
           Start game
         </div>
+      */}
+      <img className="spinner"/>
       </div>
     )
   }

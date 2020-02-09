@@ -7,12 +7,88 @@
   pointer-events: none;
 }
 
+.spinner {
+  height: 40vmin;
+  pointer-events: none;
+  animation: App-logo-spin 2s infinite linear;
+  content: url("puzzle.svg");
+}
+
 .wrapper {
   width: 100vw;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.imageOptionWrapper {
+  display: grid;
+  grid-template-columns: [left] 5vw repeat(3, [col] 1fr) [right] 5vw;
+  grid-template-rows: [top] 10vh repeat(2, [meat] 1fr) [bottom] 10vh;
+  grid-row-gap: 1vmax;
+}
+
+.top {
+  grid-row: top;
+  grid-column: left / span 5;
+  background: gainsboro;
+  font-size: 3em;
+  text-align: center;
+  line-height: 5vw;
+}
+
+.bottom {
+  grid-row: bottom;
+  grid-column: left / span 5;
+  background: gray;
+  color: white;
+  text-align: center;
+  font-size: 2em;
+  cursor: pointer;
+  line-height: 5vw;
+}
+
+.option0 {
+  margin: auto;
+  width: 16.5vw;
+  grid-row: meat 1;
+  grid-column: col 1;
+}
+
+.option1 {
+  margin: auto;
+  width: 16.5vw;
+  grid-row: meat 1;
+  grid-column: col 2;
+}
+
+.option2 {
+  margin: auto;
+  width: 16.5vw;
+  grid-row: meat 1;
+  grid-column: col 3;
+}
+
+.option3 {
+  margin: auto;
+  width: 16.5vw;
+  grid-row: meat 2;
+  grid-column: col 1;
+}
+
+.option4 {
+  margin: auto;
+  width: 16.5vw;
+  grid-row: meat 2;
+  grid-column: col 2;
+}
+
+.option5 {
+  margin: auto;
+  width: 16.5vw;
+  grid-row: meat 2;
+  grid-column: col 3;
 }
 
 @media (prefers-reduced-motion: no-preference) {
