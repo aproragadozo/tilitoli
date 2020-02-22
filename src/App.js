@@ -7,6 +7,7 @@ import './App.css';
 import Cell from './Cell.js';
 */
 import Table from './Table.js';
+import PuzzleOption from './PuzzleOption.js';
 
 class Tilitoli extends React.Component{
   constructor(props) {
@@ -25,9 +26,9 @@ class Tilitoli extends React.Component{
     }
   }
 
-start = () => {
+start = (imageFromPuzzleOptions) => {
   this.setState((state) => {
-    return {gameOn: true}
+    return {gameOn: true, image: imageFromPuzzleOptions}
   })
 }
 
@@ -42,7 +43,7 @@ getSquareImagesFromFlickr = (q) => {
 
 setImages = () => {
   this.setState((state) => {
-    return {images: [], ready: false}
+    return {gameOn: false, images: [], ready: false}
   })
   console.log("go");
   // the flickr group is https://www.flickr.com/groups/squareimg/
@@ -96,10 +97,7 @@ componentDidMount() {
       fontSize: '8vw',
       cursor: 'pointer'
     }
-    {/*
-      we'll be needing this as well,
-      in the intermediary (between app and table)
-      component
+    {
     if(this.state.gameOn) {
       return(
         <div className="wrapper">
@@ -114,7 +112,7 @@ componentDidMount() {
         </div>
       )
     }
-    */}
+    }
     if(this.state.ready) {
       return (
         <div className="imageOptionWrapper">
@@ -122,7 +120,11 @@ componentDidMount() {
             Dili-Toli!
           </div>
           {this.state.images.map((image, index) => (
-            <img key={index} src={image} className={`option${index}`}/>
+            <PuzzleOption
+              key={index}
+              src={image}
+              className={`option${index}`}
+              click={this.start}/>
           ))}
           <div className="bottom"
             onClick={(e) => this.setImages(e)}>
