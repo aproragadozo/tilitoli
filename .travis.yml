@@ -4,6 +4,9 @@ node_js:
 cache:
   directories:
     - node_modules
+branches:
+  only:
+  - master
 script:
   - npm run build
   - yarn run deploy
@@ -12,6 +15,8 @@ deploy:
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   local_dir: build
+  email: aproragadozo@gmail.com
+  keep_history: true
   on:
     branch: master
 env:
