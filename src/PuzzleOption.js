@@ -11,7 +11,8 @@ class PuzzleOption extends React.Component {
          <img
          src={this.props.src}
          className={this.props.className}
-         onClick={(e)=>this.props.click(this.props.src)}/>
+         onClick={(e)=>this.props.click(this.props.src)}
+         alt="please choose me"/>
       )
    }
 }
