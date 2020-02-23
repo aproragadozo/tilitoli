@@ -59,9 +59,7 @@ setImages = () => {
   }
   // let randomIndex = Math.floor(Math.random() * imagesPerPage);
   // eslint-disable-next-line
-  let images;
-  // eslint-disable-next-line
-  images = this.getSquareImagesFromFlickr(query)
+  let images = this.getSquareImagesFromFlickr(query)
     .then(response => {
       let images = randomIndices.map(randomIndex => 
         response.data.photos.photo[randomIndex].url_w);
