@@ -10,7 +10,7 @@ branches:
 script:
   - npm run build
 after_success:
-  - npm run deploy
+  - yarn run deploy
 deploy:
   provider: pages
   skip_cleanup: true
