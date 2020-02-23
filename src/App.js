@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line
 import axios from 'axios';
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
 /* probably won't need the Cell component here
 import Cell from './Cell.js';
@@ -58,7 +58,8 @@ setImages = () => {
     noOfImages -= 1;
   }
   // let randomIndex = Math.floor(Math.random() * imagesPerPage);
-  let images = this.getSquareImagesFromFlickr(query)
+  let images;
+  images = this.getSquareImagesFromFlickr(query)
     .then(response => {
       let images = randomIndices.map(randomIndex => 
         response.data.photos.photo[randomIndex].url_w);
@@ -86,6 +87,7 @@ componentDidMount() {
     let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 12, 13, 14, 11];
     // the constant identifier for each cell
     const identifiers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    /*
     let startButtonStyle = {
       width: '50vw',
       height: '50vh',
@@ -97,7 +99,7 @@ componentDidMount() {
       fontSize: '8vw',
       cursor: 'pointer'
     }
-    {
+    */
     if(this.state.gameOn) {
       return(
         <div className="wrapper">
@@ -111,7 +113,6 @@ componentDidMount() {
             parentCallback = {this.setImages}/>
         </div>
       )
-    }
     }
     if(this.state.ready) {
       return (
@@ -142,7 +143,7 @@ componentDidMount() {
           Start game
         </div>
       */}
-      <img className="spinner"/>
+      <img className="spinner" alt="puzzle-shaped loading spinner"/>
       </div>
     )
   }

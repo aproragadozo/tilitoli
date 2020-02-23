@@ -1,12 +1,11 @@
 import React from 'react';
-// eslint-disable-next-line
-import axios from 'axios';
-import logo from './logo.svg';
 
 class PuzzleOption extends React.Component {
+   /*
    constructor(props) {
       super(props);
    }
+   */
    render(){
       return(
          <img
