@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Dili-Toli",
+  "name": "4x4 sliding image puzzle",
   "icons": [
     {
       "src": "favicon.ico",
