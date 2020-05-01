@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/tilitoli/precache-manifest.e49b6edebbfcd989422189c3bf581159.js"
+  "/tilitoli/precache-manifest.a7eb030664ff6355151dfe6929015b29.js"
 );
 
 self.addEventListener('message', (event) => {
