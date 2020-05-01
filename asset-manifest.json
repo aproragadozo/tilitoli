@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/tilitoli/static/css/main.6d8ddee6.chunk.css",
-    "main.js": "/tilitoli/static/js/main.b14b407f.chunk.js",
-    "main.js.map": "/tilitoli/static/js/main.b14b407f.chunk.js.map",
+    "main.js": "/tilitoli/static/js/main.a3eef191.chunk.js",
+    "main.js.map": "/tilitoli/static/js/main.a3eef191.chunk.js.map",
     "runtime-main.js": "/tilitoli/static/js/runtime-main.0684072a.js",
     "runtime-main.js.map": "/tilitoli/static/js/runtime-main.0684072a.js.map",
     "static/js/2.b1f0e94d.chunk.js": "/tilitoli/static/js/2.b1f0e94d.chunk.js",
     "static/js/2.b1f0e94d.chunk.js.map": "/tilitoli/static/js/2.b1f0e94d.chunk.js.map",
     "index.html": "/tilitoli/index.html",
-    "precache-manifest.a7eb030664ff6355151dfe6929015b29.js": "/tilitoli/precache-manifest.a7eb030664ff6355151dfe6929015b29.js",
+    "precache-manifest.e49b6edebbfcd989422189c3bf581159.js": "/tilitoli/precache-manifest.e49b6edebbfcd989422189c3bf581159.js",
     "service-worker.js": "/tilitoli/service-worker.js",
     "static/css/main.6d8ddee6.chunk.css.map": "/tilitoli/static/css/main.6d8ddee6.chunk.css.map",
     "static/js/2.b1f0e94d.chunk.js.LICENSE": "/tilitoli/static/js/2.b1f0e94d.chunk.js.LICENSE",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.0684072a.js",
     "static/js/2.b1f0e94d.chunk.js",
     "static/css/main.6d8ddee6.chunk.css",
-    "static/js/main.b14b407f.chunk.js"
+    "static/js/main.a3eef191.chunk.js"
   ]
 }
