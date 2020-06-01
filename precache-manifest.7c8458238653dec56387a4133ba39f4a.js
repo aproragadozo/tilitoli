@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "97f0496b7d6446bd21006fb2040c1a6e",
+    "revision": "a7fe412e65da06711cf2862e58b892bc",
     "url": "/tilitoli/index.html"
   },
   {
-    "revision": "a0be454500d06cf1f167",
-    "url": "/tilitoli/static/css/main.e27e0893.chunk.css"
+    "revision": "8ee73322d2c7999bd561",
+    "url": "/tilitoli/static/css/main.cac3e0a3.chunk.css"
   },
   {
     "revision": "f31d7014939cedf073e7",
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/tilitoli/static/js/2.9c4981be.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "a0be454500d06cf1f167",
-    "url": "/tilitoli/static/js/main.4a4a2d52.chunk.js"
+    "revision": "8ee73322d2c7999bd561",
+    "url": "/tilitoli/static/js/main.80c4c950.chunk.js"
   },
   {
     "revision": "da3c3fc2df7449661143",
