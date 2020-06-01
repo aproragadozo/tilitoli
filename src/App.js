@@ -1,85 +1,80 @@
-import React from 'react';
+import React from "react";
 // eslint-disable-next-line
-import axios from 'axios';
+import axios from "axios";
 //import logo from './logo.svg';
-import './App.css';
+import "./App.css";
 /* probably won't need the Cell component here
 import Cell from './Cell.js';
 */
-import Table from './Table.js';
-import PuzzleOption from './PuzzleOption.js';
+import Table from "./Table.js";
+import PuzzleOption from "./PuzzleOption.js";
 
-class Tilitoli extends React.Component{
+class Tilitoli extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: 'https://source.unsplash.com/random/400x400',
+      image: "https://source.unsplash.com/random/400x400",
       images: [],
-      ready:false,
+      ready: false,
       gameOn: false,
-      // moved the counter and isShuffling
-      // here from Table; Table methods need to be also (?)
-      shiftCounter: 0,
-      isShuffling: false,
       //checkSolved: this.checkSolved.bind(this),
-      solved: false
+      solved: false,
+    };
+  }
+
+  start = (imageFromPuzzleOptions) => {
+    this.setState((state) => {
+      return { gameOn: true, image: imageFromPuzzleOptions };
+    });
+  };
+
+  getSquareImagesFromFlickr = (q) => {
+    try {
+      return axios.get(q);
+    } catch (error) {
+      console.error(error);
     }
-  }
+  };
 
-start = (imageFromPuzzleOptions) => {
-  this.setState((state) => {
-    return {gameOn: true, image: imageFromPuzzleOptions}
-  })
-}
+  setImages = () => {
+    this.setState((state) => {
+      return { gameOn: false, images: [], ready: false };
+    });
+    console.log("go");
+    // the flickr group is https://www.flickr.com/groups/squareimg/
+    let group = "17449586@N00";
+    let imagesPerPage = 100;
+    let noOfImages = 6;
+    let randomIndices = [];
+    let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
 
-getSquareImagesFromFlickr = (q) => {
-  try {
-    return axios.get(q)
-  }
-  catch (error) {
-    console.error(error)
-  }
-}
-
-setImages = () => {
-  this.setState((state) => {
-    return {gameOn: false, images: [], ready: false}
-  })
-  console.log("go");
-  // the flickr group is https://www.flickr.com/groups/squareimg/
-  let group = "17449586@N00";
-  let imagesPerPage = 100;
-  let noOfImages = 6;
-  let randomIndices = [];
-  let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
-
-  while(noOfImages >0) {
-    randomIndices.push(Math.floor(Math.random() * imagesPerPage));
-    noOfImages -= 1;
-  }
-  // let randomIndex = Math.floor(Math.random() * imagesPerPage);
-  // eslint-disable-next-line
-  let images = this.getSquareImagesFromFlickr(query)
-    .then(response => {
-      let images = randomIndices.map(randomIndex => 
-        response.data.photos.photo[randomIndex].url_w);
-      this.setState((state) => {
-        return {images: images, ready: true}
+    while (noOfImages > 0) {
+      randomIndices.push(Math.floor(Math.random() * imagesPerPage));
+      noOfImages -= 1;
+    }
+    // let randomIndex = Math.floor(Math.random() * imagesPerPage);
+    // eslint-disable-next-line
+    let images = this.getSquareImagesFromFlickr(query)
+      .then((response) => {
+        let images = randomIndices.map(
+          (randomIndex) => response.data.photos.photo[randomIndex].url_w
+        );
+        this.setState((state) => {
+          return { images: images, ready: true };
+        });
       })
-    })
-    .catch(error => {
-      console.log(error)
-    })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-}
+  resizeImages = (pic) => {
+    // empty for now
+  };
 
-resizeImages = (pic) => {
-  // empty for now
-}
-
-componentDidMount() {
-  this.setImages();
-}
+  componentDidMount() {
+    this.setImages();
+  }
 
   render() {
     // starting state for Table that gets overwritten
@@ -100,52 +95,51 @@ componentDidMount() {
       cursor: 'pointer'
     }
     */
-    if(this.state.gameOn) {
-      return(
+    if (this.state.gameOn) {
+      return (
         <div className="wrapper">
           <Table
             rows={4}
             cols={4}
             numbers={numbers}
             hole={15}
-            identifiers = {identifiers}
+            identifiers={identifiers}
             image={this.state.image}
-            parentCallback = {this.setImages}/>
+            parentCallback={this.setImages}
+          />
         </div>
-      )
+      );
     }
-    if(this.state.ready) {
+    if (this.state.ready) {
       return (
         <div className="imageOptionWrapper">
-          <div className="top">
-            Dili-Toli!
-          </div>
+          <div className="top">Dili-Toli!</div>
           {this.state.images.map((image, index) => (
             <PuzzleOption
               key={index}
               src={image}
               className={`option${index}`}
-              click={this.start}/>
+              click={this.start}
+            />
           ))}
-          <div className="bottom"
-            onClick={(e) => this.setImages(e)}>
-              Get new images
+          <div className="bottom" onClick={(e) => this.setImages(e)}>
+            Get new images
           </div>
         </div>
-      )
+      );
     }
     return (
       <div className="wrapper">
-      {/*
+        {/*
         <div
           style={ startButtonStyle }
           onClick={this.start}>
           Start game
         </div>
       */}
-      <img className="spinner" alt="puzzle-shaped loading spinner"/>
+        <img className="spinner" alt="puzzle-shaped loading spinner" />
       </div>
-    )
+    );
   }
 }
 
