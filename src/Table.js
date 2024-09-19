@@ -139,13 +139,13 @@ class Table extends React.Component {
 
   getBackgroundPos = (index, img) => {
     // eslint-disable-next-line
-    let pos;
+    //let pos;
     let coords = this.getCoords(index, this.props.rows, this.props.cols);
     coords.row *= -1;
     coords.col *= -1;
     let xPos = (img.width / 4) * coords.row + "px";
     let yPos = (img.height / 4) * coords.col + "px";
-    return (pos = xPos + " " + yPos);
+    return (xPos + " " + yPos);
   };
   // I'm not sure why this is necessary
   // and couldn't be called at the end of a swap
