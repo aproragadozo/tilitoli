@@ -14,6 +14,7 @@
     "sass": "^1.79.1",
     "typescript": "^5.6.2",
     "unsplash-js": "^7.0.19",
+    "yarn": "^1.22.22",
     "yarn-upgrade-all": "^0.7.4"
   },
   "scripts": {
