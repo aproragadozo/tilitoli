@@ -6,6 +6,7 @@ import "./App.css";
 /* probably won't need the Cell component here
 import Cell from './Cell.js';
 */
+// require('dotenv').config();
 import Table from "./Table.js";
 import PuzzleOption from "./PuzzleOption.js";
 import Carousel from "./Carousel.js";
@@ -20,11 +21,16 @@ class Tilitoli extends React.Component {
       gameOn: false,
       //checkSolved: this.checkSolved.bind(this),
       solved: false,
+      // server message
+      serverData: ""
     };
+    this.start = this.start.bind(this);
   }
 
   start = (imageFromPuzzleOptions) => {
-    console.log("alma");
+    axios.get(process.env.NODE_URL)
+    .then((res) => res.json())
+    .then((data) => console.log(data));
     this.setState((state) => {
       return { gameOn: true, image: imageFromPuzzleOptions };
     });
@@ -55,6 +61,7 @@ class Tilitoli extends React.Component {
       randomSix.add(Math.random());
     };
     //console.log(randomSix);
+    console.log(process.env);
     let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
 
   
@@ -83,8 +90,19 @@ class Tilitoli extends React.Component {
     // empty for now
   };
 
+  // talk to the server
+  talkToServer = () => {
+    axios.get("http://localhost:3001/tilitoli")
+    .then((response) => {
+      this.setState((state) => {
+        return { serverData: response.data.message };
+      })
+    });
+  };
+
   componentDidMount() {
     this.setImages();
+    this.talkToServer();
   }
 
   render() {
@@ -127,7 +145,7 @@ class Tilitoli extends React.Component {
           <div className="top">Dili-Toli!</div>
           <Carousel images={this.state.images} onClickEvent={this.start}/>
           <div className="bottom" onClick={(e) => this.setImages(e)}>
-            Get new images
+            {this.state.serverData}
           </div>
         </div>
       );

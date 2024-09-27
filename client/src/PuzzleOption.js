@@ -1,11 +1,15 @@
 import React from 'react';
 
-class PuzzleOption extends React.Component {
-   /*
-   constructor(props) {
-      super(props);
-   }
-   */
+const PuzzleOption = ({src, className, click}) => {
+   return(
+      <img
+         src={src}
+         className={className}
+         onClick={(e) => click(src)}
+         alt="please choose me"/>
+   );
+}
+/*class PuzzleOption extends React.Component {
    render(){
       return(
          <img
@@ -15,6 +19,6 @@ class PuzzleOption extends React.Component {
          alt="please choose me"/>
       )
    }
-}
+}*/
 
 export default PuzzleOption;
