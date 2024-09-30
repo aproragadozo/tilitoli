@@ -28,9 +28,9 @@ class Tilitoli extends React.Component {
   }
 
   start = (imageFromPuzzleOptions) => {
-    axios.get(process.env.NODE_URL)
+    /*axios.get(process.env.NODE_URL)
     .then((res) => res.json())
-    .then((data) => console.log(data));
+    .then((data) => console.log(data)); */
     this.setState((state) => {
       return { gameOn: true, image: imageFromPuzzleOptions };
     });
@@ -62,7 +62,7 @@ class Tilitoli extends React.Component {
     };
     //console.log(randomSix);
     console.log(process.env);
-    let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
+    let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY.trim()}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
 
   
     // using the non-duplicate random numbers to access unique image indices
@@ -92,8 +92,9 @@ class Tilitoli extends React.Component {
 
   // talk to the server
   talkToServer = () => {
-    axios.get("http://localhost:3001/tilitoli")
+    axios.get("http://localhost:3001/tilitoli", {crossDomain: true})
     .then((response) => {
+      console.log(response.data);
       this.setState((state) => {
         return { serverData: response.data.message };
       })
