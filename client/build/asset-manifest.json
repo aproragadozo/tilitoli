@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/tilitoli/static/css/main.811e208e.css",
+    "main.js": "/tilitoli/static/js/main.82724a11.js",
+    "static/media/puzzle.svg": "/tilitoli/static/media/puzzle.7b2fb0a8e9199ee98d89.svg",
+    "index.html": "/tilitoli/index.html",
+    "main.811e208e.css.map": "/tilitoli/static/css/main.811e208e.css.map",
+    "main.82724a11.js.map": "/tilitoli/static/js/main.82724a11.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.811e208e.css",
+    "static/js/main.82724a11.js"
+  ]
+}
