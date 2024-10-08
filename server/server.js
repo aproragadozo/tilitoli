@@ -1,34 +1,30 @@
-const express = require("express");
+import express from "express"
 const app = express();
-const cors = require("cors");
-require('dotenv').config();
-
-const Model = require("./model");
-const connectDB = require("./db");
-let mongoose;
-try {
-  mongoose = require("mongoose");
-} catch (e) {
-  console.log(e);
-}
-const fs = require("fs");
-const path = require("path");
-const bodyParser = require("body-parser");
-const router = express.Router();
+import cors from 'cors'
+import dotenv from 'dotenv';
+dotenv.config({ path: './config.env' });
+import * as Model from "./model.js";
+import * as db from "./db.js";
+import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
+// const router = express.Router();
+import records from "./record.js";
 
 // global setting for safety timeouts to handle possible
 // wrong callbacks that will never be called
 const TIMEOUT = 10000;
 
 app.use(express.json({extended: false}));
+app.use("/record", records);
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: "false" }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false}));
 
 // CORS
 
 var corsOptions = {
   origin: 'http://localhost:3000',
+  //origin: 'https://tilitoli-production.up.railway.app/',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(function(req, res, next) {
@@ -39,12 +35,13 @@ app.use(function(req, res, next) {
 });
 
 app.get("/tilitoli", cors(corsOptions), (req, res) => {
-  console.log(JSON.stringify(req.body));
-  res.json({message: "App is working"});
+  //console.log(JSON.stringify(req.body));
+  res.send({message: "the medium",
+    massage: process.env.REACT_APP_FLICKR_API_KEY});
   
 })
 
-app.listen(3001, function () {
-    console.log("Your app is listening on port 3001");
+app.listen(process.env.PORT, function () {
+    console.log(`Your app is listening on port ${process.env.PORT}`);
   });
 

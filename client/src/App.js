@@ -25,6 +25,7 @@ class Tilitoli extends React.Component {
       serverData: ""
     };
     this.start = this.start.bind(this);
+    this.talkToServer = this.talkToServer.bind(this);
   }
 
   start = (imageFromPuzzleOptions) => {
@@ -44,6 +45,18 @@ class Tilitoli extends React.Component {
     }
   };
 
+   // talk to the server
+   talkToServer = async () => {
+    const response = await axios({
+      method: 'get',
+      url: "http://localhost:3001/tilitoli"
+    });
+
+    this.setState((state) => {
+      return { serverData: response.data.massage };
+    })
+    };
+
   setImages = () => {
     this.setState((state) => {
       return { gameOn: false, images: [], ready: false };
@@ -61,8 +74,8 @@ class Tilitoli extends React.Component {
       randomSix.add(Math.random());
     };
     //console.log(randomSix);
-    console.log(process.env);
-    let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${process.env.REACT_APP_FLICKR_API_KEY.trim()}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
+    this.talkToServer();
+    let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${this.state.serverData.trim()}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
 
   
     // using the non-duplicate random numbers to access unique image indices
@@ -90,21 +103,10 @@ class Tilitoli extends React.Component {
     // empty for now
   };
 
-  // talk to the server
-  talkToServer = () => {
-    axios.get("http://localhost:3001/tilitoli", {crossDomain: true})
-    .then((response) => {
-      console.log(response.data);
-      this.setState((state) => {
-        return { serverData: response.data.message };
-      })
-    });
-  };
-
   componentDidMount() {
     this.setImages();
-    this.talkToServer();
-  }
+    //this.talkToServer();
+  };
 
   render() {
     // starting state for Table that gets overwritten
@@ -163,7 +165,7 @@ class Tilitoli extends React.Component {
         <img className="spinner" alt="puzzle-shaped loading spinner" />
       </div>
     );
-  }
-}
+  };
+   }
 
 export default Tilitoli;
