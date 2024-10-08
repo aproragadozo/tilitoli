@@ -92,7 +92,7 @@ class Tilitoli extends React.Component {
 
   // talk to the server
   talkToServer = () => {
-    axios.get("http://localhost:3001/tilitoli", {crossDomain: true})
+    axios.get("http://localhost:3001/record", {crossDomain: true})
     .then((response) => {
       console.log(response.data);
       this.setState((state) => {
@@ -103,7 +103,9 @@ class Tilitoli extends React.Component {
 
   componentDidMount() {
     this.setImages();
+    /* not calling the server for now until the backend is firmly in place
     this.talkToServer();
+    */
   }
 
   render() {

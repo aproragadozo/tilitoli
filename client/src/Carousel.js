@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PuzzleOption from "./PuzzleOption.js";
+import "./Carousel.css";
 
 class Carousel extends Component {
   constructor(props) {
@@ -15,19 +16,21 @@ class Carousel extends Component {
   }
 
   // Function to go to the next image
-  goToNext() {
+  goToNext = () => {
+    const { currentIndex } = this.state;
     const { images } = this.props;
-    this.setState((prevState) => ({
-      currentIndex: (prevState.currentIndex + 1) % images.length, // Loop back to first image after the last one
-    }));
+    this.setState({
+      currentIndex: (currentIndex + 1) % images.length, // Loop back to first image after the last one
+    });
   }
 
   // Function to go to the previous image
-  goToPrev() {
+  goToPrev = () => {
+    const {currentIndex } = this.state;
     const { images } = this.props;
-    this.setState((prevState) => ({
-      currentIndex: (prevState.currentIndex - 1 + images.length) % images.length, // Loop back to last image if at first
-    }));
+    this.setState({
+      currentIndex: (currentIndex - 1 + images.length) % images.length, // Loop back to last image if at first
+    });
   }
 
   /* Handle click event on the current image
@@ -44,20 +47,30 @@ class Carousel extends Component {
     const { currentIndex } = this.state;
 
     return (
-      <div className="carousel">
-        <button onClick={this.goToPrev} className="carousel__btn carousel__btn--prev">
+      <div className="carousel-container">
+        <div className="carousel">
+          <img
+            src={images[currentIndex]}
+            alt={`Slide ${currentIndex}`}
+            onClick={() => onClickEvent(images[currentIndex])}
+            className="carousel-image"
+            />
+          <button onClick={this.goToPrev} className="prev-btn">
           &lt;
-        </button>
-
-        <img
-        className="carousel-image"
-        onClick={() => onClickEvent(images[currentIndex])}
-        src={images[currentIndex]}
-        alt={images[currentIndex].alt} />
-
-        <button onClick={this.goToNext} className="carousel__btn carousel__btn--next">
-        &gt;
-      </button>
+          </button>
+          <button onClick={this.goToNext} className="next-btn">
+          &gt;
+          </button>
+        </div>
+        <div className="carousel-indicators">
+          {images.map((_, index) => (
+            <span
+            key={index}
+            className={`dot ${currentIndex === index ? "active" : ""}`}
+            onClick={() => this.setState({ currentIndex: index })}
+            ></span>
+          ))}
+          </div>        
       </div>
     );
   }
