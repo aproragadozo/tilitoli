@@ -60,7 +60,6 @@ async function getImages() {
 app.get("/tilitoli", cors(corsOptions), async function(req, res){
   //console.log(JSON.stringify(req.body));
   res.send({message: "the medium",
-    missage: process.env.REACT_APP_FLICKR_API_KEY,
     massage: await getImages()
     }
     );
