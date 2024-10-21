@@ -46,14 +46,18 @@ class Tilitoli extends React.Component {
   };
 
    // talk to the server
-   talkToServer = async () => {
+   talkToServer = async (randomIndices) => {
     const response = await axios({
       method: 'get',
       url: "http://localhost:3001/tilitoli"
     });
-
+    // using the data from server.js
+    console.log(response.data);
+    let images = await randomIndices.map(
+      (randomIndex) => response.data.massage.photos.photo[randomIndex].url_w
+    )
     this.setState((state) => {
-      return { serverData: response.data.massage };
+      return { images: images, ready: true }
     })
     };
 
@@ -74,17 +78,19 @@ class Tilitoli extends React.Component {
       randomSix.add(Math.random());
     };
     //console.log(randomSix);
-    this.talkToServer();
-    let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${this.state.serverData.trim()}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
-
-  
     // using the non-duplicate random numbers to access unique image indices
     [...randomSix].forEach(value => {
       randomIndices.push(Math.floor(value * imagesPerPage));
     });
+    this.talkToServer(randomIndices);
+    //let query = `https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${this.state.serverData.trim()}&group_id=${group}&extras=url_w&per_page=${imagesPerPage}&page=1&format=json&nojsoncallback=1`;
+    // console.log(query);
+  };
 
     // let randomIndex = Math.floor(Math.random() * imagesPerPage);
     // eslint-disable-next-line
+    /* instead of making the flickr call locally, I'm relying on the backend to call the flickr api, and pass the response,
+    then save it in the state
     let images = this.getSquareImagesFromFlickr(query)
       .then((response) => {
         let images = randomIndices.map(
@@ -97,7 +103,8 @@ class Tilitoli extends React.Component {
       .catch((error) => {
         console.log(error);
       });
-  };
+  };*/
+  
 
   resizeImages = (pic) => {
     // empty for now
