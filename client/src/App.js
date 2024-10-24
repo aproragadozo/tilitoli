@@ -28,13 +28,25 @@ class Tilitoli extends React.Component {
     this.talkToServer = this.talkToServer.bind(this);
   }
 
-  start = (imageFromPuzzleOptions) => {
+  start = async (imageFromPuzzleOptions) => {
     /*axios.get(process.env.NODE_URL)
     .then((res) => res.json())
     .then((data) => console.log(data)); */
-    this.setState((state) => {
-      return { gameOn: true, image: imageFromPuzzleOptions };
-    });
+    // post the url of the clicked image to the mongo db
+    try {
+      const response = await axios.post("http://localhost:3001/tilitoli/game-on", {
+        url: imageFromPuzzleOptions.trim()
+      });
+      console.log(response.data);
+      alert("Image URL sent to server");
+    }
+    catch(error) {
+      console.error("Error sending the URL:", error);
+    } finally {
+      this.setState((state) => {
+        return { gameOn: true, image: imageFromPuzzleOptions };
+      })
+    };
   };
 
   getSquareImagesFromFlickr = (q) => {
@@ -57,7 +69,7 @@ class Tilitoli extends React.Component {
       (randomIndex) => response.data.massage.photos.photo[randomIndex].url_w
     )
     this.setState((state) => {
-      return { images: images, ready: true }
+      return { images: images, ready: true, serverData: response.data.message }
     })
     };
 

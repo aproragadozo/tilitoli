@@ -2,22 +2,24 @@ import express from "express"
 const app = express();
 import cors from 'cors'
 import dotenv from 'dotenv';
+import path from "path";
 dotenv.config({ path: './config.env' });
 import * as Model from "./model.js";
-import * as db from "./db.js";
+// import * as db from "./db.js";
 import mongoose from "mongoose";
 import fs from "fs";
-import path from "path";
 // const router = express.Router();
-import records from "./record.js";
+// import records from "./record.js";
 import axios from 'axios';
+import Image from "./testImageModel.js";
+import { MongoClient, ServerApiVersion } from "mongodb";
 
 // global setting for safety timeouts to handle possible
 // wrong callbacks that will never be called
 const TIMEOUT = 10000;
 
 app.use(express.json({extended: false}));
-app.use("/record", records);
+// app.use("/record", records);
 app.use(cors());
 app.use(express.urlencoded({ extended: false}));
 
@@ -40,6 +42,34 @@ app.use(function(req, res, next) {
   next();
 });
 
+// Connect to MongoDB
+mongoose.connect(process.env.ATLAS_URI, {useNewUrlParser: true, useUnifiedTopology: true})
+.then(() => {
+  console.log("MongoDB connected")
+})
+.catch(err => {
+  console.error("Error connecting to MongoDB: ", err)
+});
+/*
+const client = new MongoClient(process.env.ATLAS_URI, {
+  serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true
+  },
+});
+try {
+  await client.connect();
+  await client.db("test").command({ ping: 1});
+  console.log("Pinged deployment. Successfully connected to MongoDB.");
+} catch(err) {
+  console.log(err);
+}
+
+let db = client.db("test");
+*/
+// api call to flickr
+
 async function getImages() {
   const response = await axios
   //.get("https://catfact.ninja/fact")
@@ -57,17 +87,34 @@ async function getImages() {
 // const images = getImages().then((response) => re sponse.data.photos);
 // console.log(images);
 
+// serve the images to the front-end
+
 app.get("/tilitoli", cors(corsOptions), async function(req, res){
   //console.log(JSON.stringify(req.body));
-  res.send({message: "the medium",
+  res.send({message: "Get new images",
     massage: await getImages()
     }
     );
   
 })
 
+// insert the image url posted from the front-end into the mongodb atlas collection
+
+app.post("/tilitoli/game-on", cors(corsOptions), async (req, res) => {
+  try {
+    const url = req.body.url;
+    await Image.create({
+      url: url
+    });
+    res.status(201).json(url);
+  }
+  catch(error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 app.listen(process.env.PORT, function () {
-    console.log(getImages());
+    // console.log(path.resolve("./config.env"));
     console.log(`Your app is listening on port ${process.env.PORT}`);
   });
 
