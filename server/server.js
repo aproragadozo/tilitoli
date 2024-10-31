@@ -13,6 +13,7 @@ import fs from "fs";
 import axios from 'axios';
 import Image from "./testImageModel.js";
 import { MongoClient, ServerApiVersion } from "mongodb";
+import imageRoutes from '../server/routes/imageRoutes.js'
 
 // global setting for safety timeouts to handle possible
 // wrong callbacks that will never be called
@@ -41,6 +42,8 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Methods", "*");
   next();
 });
+
+app.use('/tilitoli', imageRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.ATLAS_URI, {useNewUrlParser: true, useUnifiedTopology: true})
@@ -112,6 +115,21 @@ app.post("/tilitoli/game-on", cors(corsOptions), async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+// endpoint for front-end to get images from mongo
+/*
+app.get("/tilitoli/game-on", cors(corsOptions), async (req, res) => {
+  try {
+    const images = await Image.find();
+    res.json({
+      success: true,
+      images: images.map(img => ({id: img._id, url: img.url}))
+    });
+  } catch (error) {
+    res.status(500).json({success: false, message: error.message});
+  }
+});
+*/
 
 app.listen(process.env.PORT, function () {
     // console.log(path.resolve("./config.env"));

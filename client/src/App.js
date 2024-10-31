@@ -10,6 +10,9 @@ import Cell from './Cell.js';
 import Table from "./Table.js";
 import PuzzleOption from "./PuzzleOption.js";
 import Carousel from "./Carousel.js";
+// react router to navigate to the image gallery url, and the image gallery component
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import ImageGallery from "./Gallery.js";
 
 class Tilitoli extends React.Component {
   constructor(props) {
@@ -146,45 +149,58 @@ class Tilitoli extends React.Component {
       cursor: 'pointer'
     }
     */
-    if (this.state.gameOn) {
-      return (
-        <div className="wrapper">
-          <Table
-            rows={4}
-            cols={4}
-            numbers={numbers}
-            hole={15}
-            identifiers={identifiers}
-            image={this.state.image}
-            parentCallback={this.setImages}
-          />
-        </div>
-      );
-    }
-    if (this.state.ready) {
-      return (
-        <div className="imageOptionWrapper">
-          <div className="top">Dili-Toli!</div>
-          <Carousel images={this.state.images} onClickEvent={this.start}/>
-          <div className="bottom" onClick={(e) => this.setImages(e)}>
-            {this.state.serverData}
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="wrapper">
-        {/*
-        <div
-          style={ startButtonStyle }
-          onClick={this.start}>
-          Start game
-        </div>
-      */}
-        <img className="spinner" alt="puzzle-shaped loading spinner" />
-      </div>
-    );
-  };
+   return (
+    <Router>
+        <Routes>
+        <Route
+          path="/tilitoli"
+          element={
+            this.state.gameOn ? (
+              <div className="wrapper">
+                <Table
+                  rows={4}
+                  cols={4}
+                  numbers={numbers}
+                  hole={15}
+                  identifiers={identifiers}
+                  image={this.state.image}
+                  parentCallback={this.setImages}
+                />
+              </div>
+              ) : (
+              this.state.ready ? (
+                <div className="imageOptionWrapper">
+                  <div className="top">Dili-Toli!</div>
+                  <Carousel images={this.state.images} onClickEvent={this.start}/>
+                  {/*
+                  <div className="bottom" onClick={(e) => this.setImages(e)}>
+                    {this.state.serverData}
+                  </div>
+                  */}
+                  <Link className="bottom" to="/tilitoli/game-on">View solved images</Link>
+                </div>
+              ) : (
+              <div className="wrapper">
+                {/*
+                <div
+                  style={ startButtonStyle }
+                  onClick={this.start}>
+                  Start game
+                </div>
+              */}
+                <img className="spinner" alt="puzzle-shaped loading spinner" />
+              </div>
+            )
+          )
+      }/>
+      <Route
+      path="/tilitoli/game-on"
+      element={<ImageGallery/>}
+      />
+      </Routes>
+      </Router>
+   ); 
+  }
    }
 
 export default Tilitoli;

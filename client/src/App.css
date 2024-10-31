@@ -136,6 +136,13 @@
   transform: scale(1.05);
 }*/
 
+/* dashboard css */
+.image-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
